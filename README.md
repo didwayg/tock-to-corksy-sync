@@ -1,10 +1,10 @@
-# 🍷 Tock-to-Corksy Sync
+#  Tock-to-Corksy Sync
 
 This project helps Amavi Cellars save time and reduce errors by automatically logging new reservations from **Tock** into a **Google Sheet**, so staff don’t need to manually retype them into Corksy. It runs in the background and just works.
 
 ---
 
-## ✨ What It Does
+##  What It Does
 
 - Listens for new Tock reservations via webhook.
 - Pulls the **first name**, **last name**, **email**, and **phone number**.
@@ -14,13 +14,13 @@ This project helps Amavi Cellars save time and reduce errors by automatically lo
 
 ---
 
-## 🤔 Why We Built It
+##  Why We Built It
 
 Currently, staff manually copy reservation info from Tock into Corksy every morning, which is time-consuming and error-prone. This service automates that first step, creating a central list of reservations in a Google Sheet for the day. Corksy says they are working on an official integration — this tool fills the gap in the meantime.
 
 ---
 
-## 🚀 Hosting & Deployment
+##  Hosting & Deployment
 
 This app is hosted on [Render.com](https://render.com), a cloud platform that keeps it running 24/7. When a new reservation is made, Tock sends a POST request to our unique Render URL. That data is processed and written to the next row in our connected Google Sheet.
 
@@ -28,7 +28,7 @@ Whenever the code is updated on GitHub, Render redeploys the app automatically.
 
 ---
 
-## ✅ How It Works (Simple Overview)
+## How It Works 
 
 1. Customer makes a reservation through Tock.
 2. Tock sends the reservation info to our webhook (hosted on Render).
@@ -37,11 +37,11 @@ Whenever the code is updated on GitHub, Render redeploys the app automatically.
 
 ---
 
-## 📄 Example
+##  Example
 
 A new Tock reservation comes in:
 
-## 📄 Example
+##  Example
 
 A new Tock reservation comes in:
 
@@ -56,7 +56,7 @@ John | Smith | john@example.com | 555-123-4567
 
 ---
 
-## 🧑‍💻 Technical Details (for Developers or IT)
+##  Technical Details (for Developers or IT)
 
 - **Language**: Python 3
 - **Framework**: Flask
@@ -74,7 +74,7 @@ John | Smith | john@example.com | 555-123-4567
 
 ---
 
-## 🗂 Project Structure
+## Project Structure
 
 - `app.py`: The Flask web server and webhook handler
 - `google_sheets_logger.py`: Logic for writing reservation data into the Google Sheet
@@ -85,7 +85,7 @@ John | Smith | john@example.com | 555-123-4567
 
 ---
 
-## 🧠 For Future Maintainers
+## For Future Maintainers
 
 - Make sure the service account email (from the Google Cloud console) has **Editor** access to the target Google Sheet.
 - If you change the service account key, update the `GCP_KEY_BASE64` variable in Render.
