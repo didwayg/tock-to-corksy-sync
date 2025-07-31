@@ -1,42 +1,53 @@
 from flask import Flask, request, jsonify
-from google_sheets_logger import log_reservation
-from config import WEBHOOK_SECRET
-import datetime
+import os
+import base64
+import json
+import gspread
+from google.oauth2.service_account import Credentials
 
 app = Flask(__name__)
 
-@app.route('/ping', methods=['GET'])
+@app.route("/ping")
 def ping():
     return "✅ Tock-to-Corksy Sync is live."
 
-@app.route('/test-log', methods=['POST'])
-def test_log():
-    data = request.json or {
-        "first_name": "Test",
-        "last_name": "Guest",
-        "email": "test@example.com",
-        "phone": "123-456-7890",
-        "reservation_time": datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
-    }
-    log_reservation(data['first_name'], data['last_name'], data['email'], data['phone'], data['reservation_time'])
-    return "Logged test guest."
+@app.route("/webhook", methods=["POST"])
+def handle_webhook():
+    data = request.get_json()
+    print("[DEBUG] Webhook received:", data)
 
-@app.route('/webhook', methods=['POST'])
-def webhook():
-    if request.headers.get('Authorization') != WEBHOOK_SECRET:
-        return "Unauthorized", 401
+    # Auth check
+    auth_header = request.headers.get("Authorization", "")
+    expected = f"Bearer {os.getenv('WEBHOOK_SECRET', '')}"
+    if auth_header != expected:
+        return jsonify({"error": "Unauthorized"}), 401
 
-    payload = request.json
+    # Extract fields
+    name = f"{data.get('first_name', '')} {data.get('last_name', '')}".strip()
+    email = data.get("email")
+    phone = data.get("phone")
+
+    if not email:
+        return jsonify({"error": "Missing email"}), 400
+
     try:
-        guest = payload["guest"]
-        first_name = guest.get("first_name", "")
-        last_name = guest.get("last_name", "")
-        email = guest.get("email", "")
-        phone = guest.get("phone_number", "")
-        reservation_time = payload.get("reservation_time", "")
-
-        log_reservation(first_name, last_name, email, phone, reservation_time)
-        return "Reservation logged", 200
+        sheet = get_gsheet()
+        sheet.append_row([name, email, phone])
+        return jsonify({"status": "added"}), 200
     except Exception as e:
-        print("Error processing webhook:", e)
-        return "Error", 500
+        print("[ERROR]", str(e))
+        return jsonify({"error": str(e)}), 500
+
+def get_gsheet():
+    key_b64 = os.getenv("GOOGLE_CREDENTIALS_JSON")
+    json_key = base64.b64decode(key_b64).decode("utf-8")
+    creds_dict = json.loads(json_key)
+
+    creds = Credentials.from_service_account_info(
+        creds_dict,
+        scopes=["https://www.googleapis.com/auth/spreadsheets"]
+    )
+
+    client = gspread.authorize(creds)
+    sheet_id = os.getenv("SHEET_ID")
+    return client.open_by_key(sheet_id).sheet1
