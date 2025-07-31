@@ -88,15 +88,16 @@ John | Smith | john@example.com | 555-123-4567
 - Logs and error messages can be viewed from the **Logs** tab in the Render dashboard.
 - You can test the webhook manually using `curl`:
 
-curl -X POST https://your-render-url/webhook
--H "Content-Type: application/json"
--H "Authorization: Bearer your-secret"
--d '{
-"first_name": "Alice",
-"last_name": "Johnson",
-"email": "alice@example.com",
-"phone": "555-123-9876"
-}'
+curl -X POST https://your-render-url/webhook \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer your-secret" \
+  -d '{
+    "first_name": "Alice",
+    "last_name": "Johnson",
+    "email": "alice@example.com",
+    "phone": "555-123-9876"
+  }'
+
 
 
 - If Corksy releases an API in the future, a new script (e.g. `corksy_client.py`) can be added to send data directly to them instead of or alongside the Google Sheet.
