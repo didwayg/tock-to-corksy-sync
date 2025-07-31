@@ -41,10 +41,6 @@ Whenever the code is updated on GitHub, Render redeploys the app automatically.
 
 A new Tock reservation comes in:
 
-##  Example
-
-A new Tock reservation comes in:
-
 Name: John Smith
 Email: john@example.com
 Phone: 555-123-4567
