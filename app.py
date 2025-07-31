@@ -23,16 +23,19 @@ def handle_webhook():
         return jsonify({"error": "Unauthorized"}), 401
 
     # Extract fields
-    name = f"{data.get('first_name', '')} {data.get('last_name', '')}".strip()
+    first_name = data.get("first_name", "")
+    last_name = data.get("last_name", "")
     email = data.get("email")
     phone = data.get("phone")
+
+
 
     if not email:
         return jsonify({"error": "Missing email"}), 400
 
     try:
         sheet = get_gsheet()
-        sheet.append_row([name, email, phone])
+        sheet.append_row([first_name,last_name, email, phone])
         return jsonify({"status": "added"}), 200
     except Exception as e:
         print("[ERROR]", str(e))
